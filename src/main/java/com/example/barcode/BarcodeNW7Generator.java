@@ -73,17 +73,21 @@ public class BarcodeNW7Generator {
         return new BarcodeNW7Generator().genSvg(value);
     }
 
+    public static String generateDiv(String value) {
+        return new BarcodeNW7Generator().genDiv(value);
+    }
+
     private String genSvg(String value) {
-        draw(bcode[startCode]);
+        drawSvg(bcode[startCode]);
         for (int i = 0; i < value.length(); i++) {
             for (int j = 0; j < 16; j++) { // スタート，ストップコード以外で検索
                 if (value.substring(i, i + 1).startsWith(ccode[j])) {
-                    draw(bcode[j]);
+                    drawSvg(bcode[j]);
                     break;
                 }
             }
         }
-        draw(bcode[stopCode]);
+        drawSvg(bcode[stopCode]);
         return String.join("\n"
             , String.format("<svg width='%d' height='%d'>", startX, barHeight)
             , String.join("\n", results)
@@ -91,7 +95,7 @@ public class BarcodeNW7Generator {
         );
     }
 
-    void draw(String bstr) {
+    void drawSvg(String bstr) {
         var h = vMargin + barHeight;
         startX += gap;  // キャラクタ間ギャップ
         for (int i = 0; i < bstr.length(); i++) {
@@ -110,4 +114,46 @@ public class BarcodeNW7Generator {
             startX += width;
         }
     }
+
+
+    private String genDiv(String value) {
+        drawDiv(bcode[startCode]);
+        for (int i = 0; i < value.length(); i++) {
+            for (int j = 0; j < 16; j++) { // スタート，ストップコード以外で検索
+                if (value.substring(i, i + 1).startsWith(ccode[j])) {
+                    drawDiv(bcode[j]);
+                    break;
+                }
+            }
+        }
+        drawDiv(bcode[stopCode]);
+        return String.join("\n"
+            , String.format("<div style='position: relative;'>", startX, barHeight)
+            , String.join("\n", results)
+            , "</div>"
+        );
+    }
+
+    void drawDiv(String bstr) {
+        var h = vMargin + barHeight;
+        startX += gap;  // キャラクタ間ギャップ
+        for (int i = 0; i < bstr.length(); i++) {
+            int width;
+            if (bstr.substring(i, i + 1).startsWith("0")) {
+                width = shortBar;
+            } else {
+                width = longBar;
+            }
+            if ((i % 2) == 0) {
+                results.add(String.format(
+                    "<div style='background-color:black; position: absolute; top: 0; left: %dpx; width: %dpx; height: %dpx'></div>"
+                    , startX, width, h
+                    //"<rect x='%d' y='%d' width='%d' height='%d' fill='black' stroke='none'/>",
+                    //, startX, vMargin, width, h
+                ));
+            }
+            startX += width;
+        }
+    }
+
 }

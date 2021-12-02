@@ -8,7 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class BarcodeGenController {
 
     @GetMapping(path = "_barcode/nw-7/svg", produces = "text/html")
-    public String genBarcode(@RequestParam String value) {
+    public String genBarcodeAsSvg(@RequestParam String value) {
+        return html(BarcodeNW7Generator.generateSvg((value)));
+    }
+
+    @GetMapping(path = "_barcode/nw-7/div", produces = "text/html")
+    public String genBarcodeAsDiv(@RequestParam String value) {
+        return html(BarcodeNW7Generator.generateDiv((value)));
+    }
+
+    public String html(String body) {
         return String.join("\n"
             , "<html>"
             , "<head>"
@@ -18,7 +27,7 @@ public class BarcodeGenController {
             , "</style>"
             , "</head>"
             , "<body>"
-            , BarcodeNW7Generator.generateSvg((value))
+            , body
             , "</body>"
             , "</html>");
     }
