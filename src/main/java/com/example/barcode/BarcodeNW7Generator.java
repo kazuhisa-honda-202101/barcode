@@ -128,7 +128,7 @@ public class BarcodeNW7Generator {
         }
         drawDiv(bcode[stopCode]);
         return String.join("\n"
-            , String.format("<div style='position: relative;'>", startX, barHeight)
+            , String.format("<div style='position: relative; width: %d; height: %d'>", startX, barHeight)
             , String.join("\n", results)
             , "</div>"
         );
